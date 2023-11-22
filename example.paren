@@ -1,0 +1,7 @@
+(thing 
+  ; here's a comment
+  "strings can
+contain line breaks"
+  (child ["foo", 2, "bar"]))
+
+(different-thing)
