@@ -1,8 +1,4 @@
-// TODO: no
-function define(name, deps, constructor) {
-    module.exports = constructor();
-}
-// end TODO
+(define => {
 
 define('lex', [], function () {
 
@@ -61,18 +57,16 @@ function rawTokens(input) {
 };
 
 // `destring` escapes all ASCII control characters in its argument string
-// (except for \0), and returns the JSON-decoded result.
+// and returns the JSON-decoded result.
 //
 // The idea is that we want to JSON decode the (double-quoted) argument, but we
 // also want to tolerate unescaped control characters in the input, i.e.
 // allow literal newlines in the input string. So, we first escape any
-// unescaped control characters, and then pass the result to `JSON.parse`.
+// unescaped control characters (via `JSON.stringify`), and then pass the
+// result to `JSON.parse`.
 const destring = (function () {
     const escape = input =>
-        // \p{Cc} is the unicode character class for ASCII control characters.
-        // (Cc is for "C control characters," i.e. from the C programming language,
-        // while there is also Cf for "format control characters," which are
-        // specific to Unicode and not considered here).
+        // \p{Cc} is the unicode character class for control characters.
         // The "u" ("unicode") flag is necessary for the \p{...} syntax to act
         // on the input.
         input.replace(/\p{Cc}/gu, char =>
@@ -97,3 +91,8 @@ function tokens(input) {
 return {tokens};
 
 });
+
+})(typeof define === 'undefined' ?
+    function (name, deps, constructor) {
+        module.exports = constructor();
+    } : define);

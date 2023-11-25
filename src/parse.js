@@ -1,8 +1,4 @@
-// TODO: no
-function define(name, deps, constructor) {
-    module.exports = constructor();
-}
-// end TODO
+(define => {
 
 define('parse', [], function () {
 /*
@@ -99,3 +95,8 @@ function parseAll(tokens) {
 return {parseOne, parseAll};
 
 });
+
+})(typeof define === 'undefined' ?
+    function (name, deps, constructor) {
+        module.exports = constructor();
+    } : define);
