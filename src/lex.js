@@ -68,23 +68,18 @@ function rawTokens(input) {
 // allow literal newlines in the input string. So, we first escape any
 // unescaped control characters, and then pass the result to `JSON.parse`.
 const destring = (function () {
-    const escapes = {
-        '\a': '\\a',
-        '\b': '\\b',
-        '\n': '\\n',
-        '\r': '\\r',
-        '\t': '\\t'
-    };
-
-    return input =>
+    const escape = input =>
         // \p{Cc} is the unicode character class for ASCII control characters.
         // (Cc is for "C control characters," i.e. from the C programming language,
         // while there is also Cf for "format control characters," which are
         // specific to Unicode and not considered here).
         // The "u" ("unicode") flag is necessary for the \p{...} syntax to act
         // on the input.
-        // We also could have just [\a\b\n\r\t], but this looks fancy, don't it?
-        JSON.parse(input.replace(/\p{Cc}/gu, char => escapes[char] || char));
+        input.replace(/\p{Cc}/gu, char =>
+            JSON.stringify(char).slice(1, -1));
+    
+    return input =>
+        JSON.parse(escape(input));
 }());
 
 function tokens(input) {

@@ -1,3 +1,9 @@
+// TODO: no
+function define(name, deps, constructor) {
+    module.exports = constructor();
+}
+// end TODO
+
 define('parse', [], function () {
 /*
 Here is the grammar:
@@ -71,19 +77,28 @@ function doParse(tokens, index) {
         atString: () => [{string: token.text, flavor: 'atString'}, index + 1],
         number: () => [{number: token.text}, index + 1],
         symbol: () => [{symbol: token.text}, index + 1],
-        openParenthesis: listParser(')', tokens, index + 1),
+        openParenthesis: listParser(tokens, index + 1),
     }[token.kind] || other)();
 }
 
-function parse(tokens) {
-    const interested =
-              token => token.kind !== whitespace,
-          [parsed, indexAfter] =  doParse(tokens.filter(interested), 0);
-
-    // TODO: What can we say about `indexAfter`?
+function parseOne(tokens) {
+    tokens = tokens.filter(token => token.kind !== 'whitespace');
+    const [parsed, indexAfter] = doParse(tokens, 0);
     return parsed;
 }
 
-return {parse};
+function parseAll(tokens) {
+    tokens = tokens.filter(token => token.kind !== 'whitespace');
+    const values = [];
+    let index = 0;
+    while (index !== tokens.length) {
+        const [value, indexAfter] = doParse(tokens, index);
+        values.push(value);
+        index = indexAfter;
+    }
+    return values;
+}
+
+return {parseOne, parseAll};
 
 });
