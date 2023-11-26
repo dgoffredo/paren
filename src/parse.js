@@ -39,7 +39,7 @@ function parseList(tokens, index) {
         }
 
         result.push(parsed);
-    };
+    }
 
     if (index >= tokens.length) {
         // assert.deepEqual(() => index,() => tokens.length);
